@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Seus entregáveis | Douglas Carlos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f4f8; --surface:#ffffff; --ink:#1d1a2b; --muted:#615d74; --line:#dedbe8;
+  --accent:#4f35e0; --accent-ink:#ffffff; --soft:#ebe7fb; --ok:#13795b;
+  --head:"Bricolage Grotesque","Trebuchet MS",sans-serif; --body:"Source Sans 3","Segoe UI",Arial,sans-serif;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--bg:#14121d;--surface:#1e1b2c;--ink:#f1effa;--muted:#aaa5c2;--line:#352f4d;--accent:#8f7dff;--accent-ink:#14121d;--soft:#2a2545;--ok:#4fd1a5}
+}
+:root[data-theme="dark"]{--bg:#14121d;--surface:#1e1b2c;--ink:#f1effa;--muted:#aaa5c2;--line:#352f4d;--accent:#8f7dff;--accent-ink:#14121d;--soft:#2a2545;--ok:#4fd1a5}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55}
+.wrap{max-width:760px;margin:0 auto;padding:28px 20px 64px}
+h1,h2,h3{font-family:var(--head);line-height:1.12;margin:0}
+h1{font-size:clamp(30px,6vw,44px);font-weight:800;letter-spacing:-.02em}
+.lead{color:var(--muted);margin:12px 0 0;max-width:56ch}
+.brand{color:var(--muted);font-size:15px;margin-bottom:22px}
+h2{font-size:22px;font-weight:600;margin-bottom:12px}
+.seg{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:26px}
+.seg button{font:inherit;font-weight:600;text-align:left;padding:16px 18px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;transition:border-color .15s,background .15s}
+.seg button:hover{border-color:var(--accent)}
+.seg button[aria-pressed="true"]{border-color:var(--accent);background:var(--soft)}
+button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+#result{margin-top:34px}
+.empty{border:1.5px dashed var(--line);border-radius:12px;padding:22px;color:var(--muted)}
+.steps{list-style:none;padding:0;margin:0;display:grid;gap:14px}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;display:grid;grid-template-columns:40px 1fr;gap:14px}
+.n{width:40px;height:40px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-family:var(--head);font-weight:800}
+.step h3{font-size:19px;font-weight:600}
+.step p{margin:6px 0 14px;color:var(--muted)}
+.btn{display:inline-block;font:inherit;font-weight:600;padding:11px 18px;border-radius:10px;border:1.5px solid var(--accent);background:var(--accent);color:var(--accent-ink);text-decoration:none;cursor:pointer}
+.btn.alt{background:transparent;color:var(--accent)}
+.btn+.btn{margin-left:8px}
+.prompts{display:grid;gap:10px;margin-top:4px}
+details{border:1px solid var(--line);border-radius:10px;background:var(--bg)}
+summary{cursor:pointer;padding:13px 16px;font-weight:600;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";float:right;color:var(--accent);font-weight:800}
+details[open] summary::after{content:"–"}
+.pbody{padding:0 16px 16px}
+pre{white-space:pre-wrap;word-wrap:break-word;font-family:var(--body);font-size:15px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px;max-height:320px;overflow:auto;margin:10px 0 12px}
+.tip{font-size:15px;color:var(--muted);margin:0 0 4px}
+.refs{margin-top:14px;border-top:1px solid var(--line);padding-top:6px}
+.refs[hidden]{display:none}
+.refs h4{font-family:var(--head);font-size:17px;font-weight:600;margin:14px 0 6px}
+.refs ul{margin:0;padding-left:20px}
+.refs li{margin:5px 0}
+.refs a{color:var(--accent);font-weight:600}
+.refs .opt{color:var(--muted);font-size:15px}
+.done{display:flex;align-items:center;gap:8px;margin-top:14px;font-size:15px;color:var(--muted);cursor:pointer}
+.done input{width:20px;height:20px;accent-color:var(--accent)}
+.prog{margin:0 0 16px}
+.prog p{margin:0 0 8px;font-weight:600}
+.bar{height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar span{display:block;height:100%;width:0;background:var(--ok);transition:width .25s}
+.admin{margin-top:40px;border:1.5px dashed var(--line);border-radius:12px;padding:18px}
+.admin h2{font-size:18px}
+.admin label{display:block;font-size:15px;color:var(--muted);margin:10px 0 4px}
+.admin input,.admin select{width:100%;font:inherit;padding:10px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.admin output{display:block;margin-top:12px;word-break:break-all;font-size:15px}
+.afi{margin-top:26px;background:var(--soft);border:1.5px solid var(--accent);border-radius:14px;padding:24px}
+.afi h2{font-size:24px;font-weight:800;letter-spacing:-.01em;margin-bottom:14px}
+.afi p{margin:0 0 12px;max-width:60ch}
+.afi strong{font-weight:800}
+.afi .btn{margin-top:6px}
+.afi-aviso{display:block;margin-top:14px;color:var(--muted);font-size:13.5px}
+.share{margin-top:18px;font-size:15px;color:var(--muted)}
+.share button{font:inherit;color:var(--accent);background:none;border:0;padding:0;text-decoration:underline;cursor:pointer}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.show{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div class="brand">Douglas Carlos Acompanhamento</div>
+  <h1 id="titulo">Seus entregáveis estão aqui</h1>
+  <p class="lead">Escolha o seu segmento e veja o planner certo para você, o vídeo de instalação e os prompts de I.A.</p>
+
+  <div class="seg" id="seg" role="group" aria-label="Escolha seu segmento"></div>
+  <div id="result" aria-live="polite"><div class="empty">Selecione seu segmento acima para abrir seus materiais.</div></div>
+  <section class="admin" id="admin" hidden></section>
+</main>
+<div class="toast" id="toast" role="status">Copiado!</div>
+
+<script>
+/* ===== CONFIGURAÇÃO: links e textos ===== */
+var VIDEO_INSTALAR_PLANNER = "https://youtu.be/-Bat_zJVd2s";
+var VIDEO_APLICAR_PROMPTS  = "https://youtu.be/vWImVm2gwNM";
+
+var SEGMENTOS = [
+  {id:"cabeleireiros", nome:"Cabeleireiro(a)", afiliado:true, posicionar:{
+    intro:"Referências de como montar seu perfil. Abra cada link no Instagram e use como modelo para os seus destaques e posts fixados.",
+    grupos:[
+      {titulo:"Destaques", itens:[
+        {nome:"Comece por aqui", url:"https://www.instagram.com/stories/highlights/18119629498753983/"},
+        {nome:"Feedbacks", url:"https://www.instagram.com/stories/highlights/17924704053126221/"},
+        {nome:"10 perguntas", url:"https://www.instagram.com/stories/highlights/17927876964084586/"},
+        {nome:"Cortes", url:"https://www.instagram.com/stories/highlights/17938978272206196/"},
+        {nome:"Palestras", url:"https://www.instagram.com/stories/highlights/18594139306051197/"}
+      ]},
+      {titulo:"Posts fixados", itens:[
+        {nome:"Vídeo do espaço físico", url:"https://www.instagram.com/p/DYhpa-XvbJr/"},
+        {nome:"Fotos dos melhores cabelos", url:"https://www.instagram.com/p/DMdGDdgOJ9w/?img_index=1"},
+        {nome:"Palestras", url:"https://www.instagram.com/p/DMiPKN4uepW/?img_index=1"},
+        {nome:"Um dia de atendimento comigo", url:"https://www.instagram.com/p/C38AGY6r3dF/", opcional:true}
+      ]}
+    ]}, url:"https://evergreen-quiver-8f1.notion.site/Planner-de-Conte-do-30-Dias-Cabeleireiros-36e5b9d50c618111bed1ff346d0774ac?source=copy_link"},
+  {id:"nail-design", nome:"Nail design", afiliado:true, url:"https://evergreen-quiver-8f1.notion.site/Planner-de-Conte-do-30-Dias-Nail-Design-37a5b9d50c618191884cd01f3c45ca83?source=copy_link"},
+  {id:"tatuadoras", nome:"Tatuadora", url:"https://evergreen-quiver-8f1.notion.site/029619bd626447adaf93d1e0d32f62a4?v=37d5b9d50c6181229e62000c387e7b46&source=copy_link"},
+  {id:"pos-parto", nome:"Pós-parto", url:"https://evergreen-quiver-8f1.notion.site/5a3214347e314b78aa6a808cbd9000a1?v=3c25b9d50c61810e978f000ce3452109&source=copy_link"},
+  {id:"maternidade", nome:"Maternidade", url:"https://evergreen-quiver-8f1.notion.site/Planner-de-Conte-do-30-Dias-Maternidade-Cabeleireiro-4025b9d50c618149a106dff014a35977?source=copy_link"},
+  {id:"pastoral", nome:"Conteúdo cristão", url:"https://evergreen-quiver-8f1.notion.site/Planner-de-Conte-do-30-Dias-Pastores-V2-0-3ca5b9d50c6181c4abd7e793f97ad7cf?source=copy_link"}
+];
+
+var AFILIADO = {
+  titulo:"Agora que seu posicionamento está ajustado, falta a gestão.",
+  texto:[
+    "**Pesquisas do Sebrae apontam a falta de vendas e a falta de gestão entre as principais causas de fechamento de pequenos negócios.** Seu posicionamento cuida da primeira. A segunda precisa de uma ferramenta.",
+    "Por ser minha mentorada, você ganha este bônus: uma plataforma de gestão **100% grátis por 30 dias**, só fazendo o cadastro.",
+    "A Usalon Pro foi pensada para o mercado da beleza. Ela envia mensagens automáticas no WhatsApp, mostra a gestão do seu negócio e controla suas entradas e saídas. Muito intuitiva e prática, e com suporte de atendimento rápido.",
+    "Teste sem pagar e veja, com os seus próprios números, como está o seu negócio."
+  ],
+  botao:"Testar 30 dias grátis",
+  url:"https://pro.usalon.app/register?cupom=DOUGLAS10"
+};
+
+var PROMPTS = [
+{titulo:"Roteiro viral", texto:`PROMPT — AGENTE DE CRIAÇÃO DE ROTEIROS VIRAIS (MODELO AVANÇADO)
+
+Função do agente:
+Você é um especialista em criação de roteiros virais para redes sociais, focado em empreendedores, marcas pessoais e negócios.
+Seu objetivo é criar roteiros de alto impacto, com potencial de viralização, autoridade e conversão, seguindo rigorosamente a estrutura abaixo.
+
+OBJETIVO DO ROTEIRO
+Criar um roteiro que:
+- Prenda a atenção nos primeiros 3 segundos
+- Gere curiosidade com ponta solta
+- Construa autoridade com dados reais
+- Entregue insight estratégico
+- Conduza o público à ação (salvar, enviar, comentar, seguir)
+
+ESTRUTURA OBRIGATÓRIA (NÃO ALTERAR)
+
+[GANCHO]
+- Comece falando diretamente com o público-alvo (ex: "Empreendedor…", "Atleta…", "Nail designer…", "Ministro de louvor…").
+- Traga uma afirmação forte, incômoda ou contraintuitiva.
+- Gere curiosidade deixando uma pergunta ou tensão sem resposta, que só será resolvida após o CTA 1.
+- Evite explicações. Ataque identidade + risco invisível.
+
+[NARRATIVA ENVOLVENTE + VALIDAÇÃO]
+- Contextualize o tema com storytelling curto ou observação de mercado.
+- Obrigatoriamente inclua dados, estudos, estatísticas ou fatos verificáveis, como: pesquisas acadêmicas, dados de mercado, relatórios de plataformas, comportamentos documentados, cases conhecidos.
+- Use linguagem de descoberta: "Pouca gente percebeu isso…", "O que ninguém está falando é…"
+- Os dados devem reforçar o argumento, não virar aula.
+Sempre que necessário, busque informações validadas disponíveis na internet para sustentar a narrativa e aumentar a autoridade do discurso.
+
+[CTA 1 — URGENTE]
+- Sempre peça para: salvar o vídeo e enviar para alguém específico.
+- Crie urgência real, usando: risco, perda, timing, contexto atual.
+- Exemplo de lógica: "Salva esse vídeo e manda pra [perfil X], porque isso pode mudar a forma como você vê [tema]."
+
+[CONTEÚDO]
+- Desenvolva 2 ou 3 pontos no máximo.
+- Cada ponto deve: quebrar uma crença comum, reinterpretar algo óbvio, trazer clareza estratégica.
+- Use frases curtas. Evite didatismo.
+- Priorize: insights contraintuitivos, analogias fortes, leitura de cenário.
+O conteúdo deve fazer o público pensar: "Nunca tinha visto por esse ângulo."
+
+[CTA 2 — POSICIONAMENTO]
+- Finalize com uma pergunta direta que force o público a se posicionar.
+- O comentário deve ser um ato de identidade, não só engajamento.
+- Inclua convite para seguir como continuação lógica da ideia.
+
+TOM E ESTILO (OBRIGATÓRIO)
+- Autoridade calma
+- Confiança sem arrogância
+- Linguagem direta
+- Zero clichês
+- Zero frases genéricas
+- Escrita magnética, de leitura rápida
+- Sensação final: "Esse conteúdo mudou minha forma de pensar."
+
+INSTRUÇÕES FINAIS AO AGENTE
+- Nunca misture estruturas
+- Nunca pule o CTA 1 e o CTA 2
+- Sempre usar dados reais quando possível
+- Sempre adaptar o discurso ao nicho solicitado
+- O roteiro deve estar pronto para gravação`},
+
+{titulo:"Roteiro viral de 1 minuto", texto:`PROMPT MESTRE — ROTEIROS VIRAIS COM AUTORIDADE (ATÉ 1 MINUTO)
+
+Leia com atenção e siga TODAS as instruções abaixo sem alterar a estrutura.
+
+CONTEXTO
+Você é um especialista em criação de roteiros virais para vídeos curtos (Reels, TikTok e Shorts), focado em autoridade, crescimento orgânico e posicionamento profissional.
+Seu papel é transformar qualquer TEMA enviado pelo usuário em um roteiro falado, com alto potencial de retenção, salvamento e compartilhamento.
+O roteiro será usado por: empreendedores, médicos e profissionais da saúde, empresários, criadores de conteúdo, especialistas em qualquer nicho.
+
+OBJETIVO DO ROTEIRO
+- Gerar atenção imediata
+- Criar urgência real
+- Posicionar o autor como referência no tema
+- Validar o discurso com dados reais e verificáveis
+- Conduzir o público a salvar, compartilhar e comentar
+- Encerrar com pergunta estratégica + CTA claro
+
+DURAÇÃO
+O roteiro deve ter entre 45 segundos e 1 minuto, com linguagem falada, direta e fluida.
+
+ESTRUTURA OBRIGATÓRIA (NUNCA ALTERAR A ORDEM)
+O roteiro DEVE conter exatamente essas partes, com esses títulos:
+
+[GANCHO]
+- Comece chamando diretamente o público-alvo (ex: "Empreendedores…", "Médicos…", "Pais…", "Empresários…").
+- Gere curiosidade + urgência.
+- Traga uma consequência clara de NÃO agir agora.
+- Quebre uma crença comum do nicho.
+- NÃO explique tudo aqui.
+
+[CTA 1]
+- Peça para salvar o vídeo.
+- Peça para enviar para alguém específico do mesmo nicho.
+- Justifique o motivo com urgência real ("porque isso pode mudar…", "antes que continue cometendo esse erro…").
+
+[NARRATIVA ENVOLVENTE + DADOS]
+- Apresente a autoridade do autor (nome + profissão).
+- BUSQUE informações reais na internet sobre o tema: estudos científicos, dados de mercado, números oficiais, pesquisas reconhecidas, fatos públicos verificáveis.
+- Traduza os dados em linguagem simples.
+- Mostre que existe um padrão claro por trás do problema.
+- NÃO conclua totalmente a ideia.
+REGRA OBRIGATÓRIA: os dados DEVEM ser reais, atualizados e coerentes com o tema. Nunca inventar números, estudos ou fatos.
+
+[CONTEÚDO]
+- Seja direto e enxuto.
+- Use listas curtas (máx. 3 pontos).
+- Traga causa → consequência.
+- Traga aprendizado prático aplicável.
+- Use frases fortes, que poderiam ser destacadas ou salvas.
+Exemplo de fechamento do conteúdo: "Quando a orientação é superficial, o hábito não muda. Resultados só aparecem quando o ambiente muda."
+
+[CTA 2]
+- Faça uma pergunta direta que gere comentário.
+- Reforce a identidade do público ("como empreendedor…", "como médico…").
+- Convide para seguir o perfil.
+- Finalize com uma frase de posicionamento forte (ideológica).
+
+TOM DE VOZ (OBRIGATÓRIO)
+Direto, estratégico, didático, provocativo sem agressividade, linguagem de quem vive o que fala, autoridade tranquila.
+
+O QUE NÃO FAZER
+- Não mudar a estrutura
+- Não escrever como artigo
+- Não usar linguagem genérica
+- Não inventar dados
+- Não concluir tudo antes do CTA 1
+- Não misturar CTAs
+
+RESULTADO ESPERADO
+Um roteiro pronto para gravação, com potencial viral, baseado em dados reais, que constrói autoridade no longo prazo.
+
+COMANDO FINAL AO AGENTE
+"Crie o roteiro seguindo rigorosamente essa estrutura, adaptando apenas o conteúdo ao TEMA enviado e buscando dados reais na internet para validar a mensagem."`},
+
+{titulo:"Legendas de publicações", texto:`Você é um especialista em marketing, comunicação estratégica e neurociência do consumo.
+Sua missão é criar uma legenda para Instagram com foco em autoridade, valor percebido e conversão, usando a estrutura abaixo.
+
+CONTEXTO
+- Nicho: [informe o nicho ou profissão]
+- Público-alvo: [quem vai ler]
+- Tema central do conteúdo: [assunto do post/vídeo]
+- Objetivo do post: [educar, gerar autoridade, engajar, vender, posicionar]
+
+ESTRUTURA OBRIGATÓRIA DA LEGENDA
+
+1. GANCHO (1–2 frases fortes no início)
+- Comece chamando diretamente o público pelo nome (ex: Empreendedor, Médico, Neuropsicólogo, Prestador de serviço).
+- Gere curiosidade, quebra de padrão ou alerta.
+- Faça a pessoa sentir: "isso é comigo".
+
+2. CONTEXTO / NARRATIVA CURTA
+- Explique rapidamente o cenário ou o problema.
+- Conecte com uma dor real do público.
+- Linguagem simples, direta e humana.
+
+3. EMBASAMENTO COM DADOS (OBRIGATÓRIO)
+- Traga dados científicos, estatísticos ou comportamentais relevantes ao tema.
+- Pode citar: neurociência, comportamento do consumidor, estudos de mercado, pesquisas reconhecidas.
+- Use os dados para confirmar o ponto principal da legenda, não apenas para enfeitar.
+
+4. INSIGHT PRINCIPAL / QUEBRA DE CRENÇA
+- Mostre o que a maioria faz errado.
+- Apresente a nova forma de pensar ou agir.
+- Gere clareza e sensação de "agora fez sentido".
+
+5. APLICAÇÃO PRÁTICA
+- Mostre como isso se aplica na prática para esse público.
+- Pode ser um exemplo simples, um comportamento ou uma mudança de mentalidade.
+
+6. CTA ESTRATÉGICO (OBRIGATÓRIO)
+- O CTA deve estar diretamente conectado ao conteúdo.
+- Incentive interação real: comentário reflexivo, salvar, compartilhar.
+- Finalize com um CTA de autoridade: "Me siga para aprender mais sobre [resultado desejado pelo público]" ou "Aqui eu te ensino a fazer isso na prática".
+
+REGRAS IMPORTANTES
+- Linguagem clara, envolvente e segura.
+- Nada genérico ou motivacional vazio.
+- A legenda deve educar, posicionar e gerar desejo de continuar acompanhando o perfil.
+- O leitor precisa sair pensando: "esse perfil entende do que fala".
+
+Agora gere a legenda seguindo exatamente essa estrutura.`},
+
+{titulo:"Títulos de capa e vídeos", texto:`Você é um estrategista de conteúdo especializado em títulos de capa para vídeos curtos (Reels, TikTok, Shorts). Sua função é criar títulos que soem como uma conversa natural, mas que sejam clicáveis.
+
+## Sobre mim
+- Minha profissão/segmento: [preencha]
+- Para quem eu falo (meu cliente ideal): [preencha]
+- O que eu resolvo para essa pessoa: [preencha]
+- Uma história, resultado ou caso real que eu posso usar: [preencha, se tiver]
+
+## O tema do vídeo
+[Descreva em poucas linhas o que você quer falar no vídeo]
+
+## Como criar os títulos
+
+Use estas fórmulas, que são as que mais funcionam em títulos de capa:
+
+1. Confissão + virada: uma fraqueza ou erro admitido, seguido de uma consequência inesperada.
+2. Marco no tempo: "essa semana", "em 2019", "hoje" — dá sensação de bastidor real.
+3. Número específico: números quebrados e reais (37, 871, 18 dias) parecem prova; números redondos parecem inventados.
+4. Contra o consenso: contrariar algo que todo mundo do meu segmento repete.
+5. Antes e depois em uma linha: passado e presente colados, sem explicar o meio.
+6. Pergunta que expõe: uma pergunta em que a pessoa se sente flagrada e precisa saber a resposta.
+7. Superpoder: uma afirmação de competência tão específica que a pessoa quer testar.
+8. Manifesto: uma crença forte, dita como frase de identidade.
+
+Regras obrigatórias:
+- Escreva em primeira pessoa ou falando diretamente com "você".
+- Use linguagem falada, como uma mensagem de áudio, não como manchete de anúncio.
+- Deixe sempre uma lacuna aberta: o título promete algo que só o vídeo responde.
+- Tamanho ideal: de 8 a 16 palavras, de preferência em duas frases curtas (a primeira monta a cena, a segunda abre a curiosidade).
+- Prefira "status baixo com resultado alto" (medo, erro, pouco recurso que mesmo assim deu certo) em vez de se colocar acima do público.
+- Evite títulos genéricos de lista ("5 dicas para...") a menos que eu peça.
+- Coerência acima de tudo: nunca invente fatos, números, clientes ou resultados. Se o título precisar de um dado que eu não informei, coloque entre colchetes, como [número real], para eu preencher.
+- Se o conteúdo envolver cliente, criança ou dado pessoal, me lembre de pedir autorização antes de publicar.
+
+## O que eu quero receber
+
+Gere 10 títulos de capa sobre o tema, organizados por propósito:
+- Salvamento (a pessoa guarda para usar depois)
+- Compartilhamento (a pessoa manda para alguém)
+- Seguidor novo (a pessoa quer ver mais de mim)
+- Venda (a pessoa entende que eu resolvo o problema dela)
+
+Depois da lista, indique os 2 títulos mais fortes e explique em uma frase por que cada um funciona.
+
+Se faltar alguma informação importante sobre mim ou sobre o tema, me faça até 3 perguntas antes de gerar os títulos.`}
+];
+
+/* ===== LÓGICA ===== */
+/* Para registrar quem acessa: cole aqui a URL do Apps Script (veja o passo a passo). Vazio = sem registro. */
+var TRACK_URL = "";
+
+var params = new URLSearchParams(location.search);
+var CLIENTE = (params.get("c")||"").trim().slice(0,60);
+var ADMIN = params.get("admin")==="1";
+var atual = "";
+var segEl=document.getElementById("seg"), resEl=document.getElementById("result"), toastEl=document.getElementById("toast");
+
+if(CLIENTE){document.getElementById("titulo").textContent="Olá, "+CLIENTE+". Seus entregáveis estão aqui"}
+
+function track(evento,detalhe){
+  if(!TRACK_URL)return;
+  try{
+    fetch(TRACK_URL,{method:"POST",mode:"no-cors",keepalive:true,headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify({cliente:CLIENTE||"(sem nome)",segmento:atual,evento:evento,detalhe:detalhe||""})});
+  }catch(e){}
+}
+function toast(msg){toastEl.textContent=msg;toastEl.classList.add("show");setTimeout(function(){toastEl.classList.remove("show")},1600)}
+function copiar(texto,msg){
+  function fallback(){var t=document.createElement("textarea");t.value=texto;t.style.position="fixed";t.style.opacity="0";document.body.appendChild(t);t.select();try{document.execCommand("copy");toast(msg)}catch(e){toast("Selecione e copie manualmente")}document.body.removeChild(t)}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(texto).then(function(){toast(msg)},fallback)}else{fallback()}
+}
+function el(tag,cls,html){var e=document.createElement(tag);if(cls)e.className=cls;if(html!==undefined)e.innerHTML=html;return e}
+function store(seg){try{return JSON.parse(localStorage.getItem("ent:"+seg)||"{}")}catch(e){return {}}}
+function save(seg,o){try{localStorage.setItem("ent:"+seg,JSON.stringify(o))}catch(e){}}
+function link(txt,url,evt,cls){var a=el("a",cls===undefined?"btn":cls,txt);a.href=url;a.target="_blank";a.rel="noopener";a.addEventListener("click",function(){track(evt)});return a}
+
+SEGMENTOS.forEach(function(s){
+  var b=el("button","",s.nome);b.type="button";b.setAttribute("aria-pressed","false");b.dataset.id=s.id;
+  b.addEventListener("click",function(){try{history.replaceState(null,"","#"+s.id)}catch(e){location.hash=s.id}mostrar(s.id)});
+  segEl.appendChild(b);
+});
+
+function mostrar(id){
+  var s=SEGMENTOS.filter(function(x){return x.id===id})[0];
+  Array.prototype.forEach.call(segEl.children,function(b){b.setAttribute("aria-pressed",b.dataset.id===id?"true":"false")});
+  resEl.innerHTML="";
+  if(!s){atual="";resEl.appendChild(el("div","empty","Selecione seu segmento acima para abrir seus materiais."));return}
+  if(atual!==id){atual=id;track("escolheu segmento",s.nome)}
+
+  var done=store(id), keys=[];
+  var prog=el("div","prog"), pt=el("p"), bar=el("div","bar"), fill=el("span");
+  bar.appendChild(fill);prog.appendChild(pt);prog.appendChild(bar);resEl.appendChild(prog);
+  var ol=el("ol","steps");
+
+  function atualizaProg(){
+    var n=keys.filter(function(k){return done[k]}).length;
+    pt.textContent=n===keys.length?"Tudo pronto! Você concluiu todos os passos.":"Você concluiu "+n+" de "+keys.length+" passos";
+    fill.style.width=(n/keys.length*100)+"%";
+  }
+  function passo(key,titulo,desc,extra){
+    var li=el("li","step"), num=el("div","n",String(ol.children.length+1)), c=el("div");
+    c.appendChild(el("h3","",titulo));c.appendChild(el("p","",desc));
+    if(extra)extra(c);
+    var lab=el("label","done"), cb=document.createElement("input");
+    cb.type="checkbox";cb.checked=!!done[key];
+    lab.appendChild(cb);lab.appendChild(document.createTextNode("Já fiz este passo"));
+    cb.addEventListener("change",function(){done[key]=cb.checked;save(id,done);if(cb.checked)track("concluiu passo",titulo);atualizaProg()});
+    c.appendChild(lab);li.appendChild(num);li.appendChild(c);ol.appendChild(li);keys.push(key);
+  }
+
+  passo("planner","Seu planner: "+s.nome,"Planner de conteúdo de 30 dias feito para o seu segmento. Abra e duplique para o seu Notion.",function(c){
+    c.appendChild(link("Abrir meu planner",s.url,"abriu planner"));
+  });
+  passo("instalar","Como instalar o planner","Assista ao passo a passo em vídeo antes de duplicar o planner.",function(c){
+    c.appendChild(link("Assistir vídeo de instalação",VIDEO_INSTALAR_PLANNER,"abriu vídeo instalar planner"));
+  });
+  passo("prompts","Seus prompts de I.A.","Copie o prompt, cole na sua I.A., transforme em agente, troque [seu nome] e [seu segmento] pelos seus dados.",function(c){
+    var box=el("div","prompts");
+    PROMPTS.forEach(function(p){
+      var d=el("details");d.appendChild(el("summary","",p.titulo));
+      var body=el("div","pbody"), pre=el("pre");pre.textContent=p.texto;body.appendChild(pre);
+      var cb=el("button","btn","Copiar prompt");cb.type="button";
+      cb.addEventListener("click",function(){copiar(p.texto,"Prompt copiado!");track("copiou prompt",p.titulo)});
+      body.appendChild(cb);d.appendChild(body);box.appendChild(d);
+    });
+    c.appendChild(box);
+  });
+  passo("aplicar","Como aplicar os prompts","Videoaula mostrando como instalar e usar os prompts na sua I.A.",function(c){
+    c.appendChild(link("Assistir videoaula dos prompts",VIDEO_APLICAR_PROMPTS,"abriu vídeo aplicar prompts"));
+  });
+  if(s.posicionar){
+    passo("posicionar","Como posicionar seu perfil",s.posicionar.intro,function(c){
+      var tb=el("button","btn alt","Como posicionar");tb.type="button";tb.setAttribute("aria-expanded","false");
+      var panel=el("div","refs");panel.hidden=true;
+      s.posicionar.grupos.forEach(function(g){
+        panel.appendChild(el("h4","",g.titulo));
+        var ul=el("ul");
+        g.itens.forEach(function(it){
+          var li=el("li");li.appendChild(link(it.nome,it.url,"abriu referência",""));
+          if(it.opcional)li.appendChild(el("span","opt"," (opcional)"));
+          ul.appendChild(li);
+        });
+        panel.appendChild(ul);
+      });
+      tb.addEventListener("click",function(){
+        var abrir=panel.hidden;panel.hidden=!abrir;
+        tb.setAttribute("aria-expanded",abrir?"true":"false");
+        tb.textContent=abrir?"Esconder referências":"Como posicionar";
+        if(abrir)track("abriu Como posicionar");
+      });
+      c.appendChild(tb);c.appendChild(panel);
+    });
+  }
+  resEl.appendChild(ol);
+  if(s.afiliado){
+    var af=el("section","afi");
+    af.appendChild(el("h2","",""));af.lastChild.textContent=AFILIADO.titulo;
+    AFILIADO.texto.forEach(function(t){
+      var p=el("p");
+      t.split("**").forEach(function(parte,k){
+        if(k%2){var b=document.createElement("strong");b.textContent=parte;p.appendChild(b)}
+        else p.appendChild(document.createTextNode(parte));
+      });
+      af.appendChild(p);
+    });
+    af.appendChild(link(AFILIADO.botao,AFILIADO.url,"clicou teste grátis"));
+    resEl.appendChild(af);
+  }
+  atualizaProg();
+}
+
+function daHash(){mostrar((location.hash||"").replace("#",""))}
+window.addEventListener("hashchange",daHash);
+
+/* Painel para o Douglas gerar links por cliente: abra a página com ?admin=1 */
+function painelAdmin(){
+  var box=document.getElementById("admin");box.hidden=false;
+  box.appendChild(el("h2","","Gerar link para um cliente"));
+  var l1=el("label","","Nome do cliente"), n=document.createElement("input");n.placeholder="Ex.: Maria";
+  var l2=el("label","","Segmento"), sel=document.createElement("select");
+  SEGMENTOS.forEach(function(s){var o=document.createElement("option");o.value=s.id;o.textContent=s.nome;sel.appendChild(o)});
+  var l3=el("label","","Endereço da página (o link que você envia aos clientes)"), base=document.createElement("input");
+  base.value=location.href.split("?")[0].split("#")[0];
+  var out=el("output"), bt=el("button","btn","Gerar e copiar link");bt.type="button";bt.style.marginTop="12px";
+  bt.addEventListener("click",function(){
+    var u=base.value.trim()+(n.value.trim()?"?c="+encodeURIComponent(n.value.trim()):"")+"#"+sel.value;
+    out.textContent=u;copiar(u,"Link copiado!");
+  });
+  [l1,n,l2,sel,l3,base,bt,out].forEach(function(x){box.appendChild(x)});
+}
+if(ADMIN)painelAdmin();
+daHash();
+</script>
+</body>
+</html>
