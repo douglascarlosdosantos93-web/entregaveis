@@ -4,6 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Seus entregáveis | Douglas Carlos</title>
+<meta name="description" content="Planner de 30 dias, vídeos e prompts de I.A. feitos para o seu segmento.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Seus entregáveis | Douglas Carlos">
+<meta property="og:description" content="Planner de 30 dias, vídeos e prompts de I.A. feitos para o seu segmento.">
+<meta property="og:image" content="https://entregaveis-two.vercel.app/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
 <style>
@@ -392,6 +400,15 @@ function copiar(texto,msg){
   function fallback(){var t=document.createElement("textarea");t.value=texto;t.style.position="fixed";t.style.opacity="0";document.body.appendChild(t);t.select();try{document.execCommand("copy");toast(msg)}catch(e){toast("Selecione e copie manualmente")}document.body.removeChild(t)}
   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(texto).then(function(){toast(msg)},fallback)}else{fallback()}
 }
+/* Troca os campos genéricos dos prompts pelo segmento (e nome, se veio no link) */
+function preencher(texto,s){
+  function troca(t,de,para){return t.split(de).join(para)}
+  var t=troca(texto,"[informe o nicho ou profissão]",s.nome);
+  t=troca(t,"Minha profissão/segmento: [preencha]","Minha profissão/segmento: "+s.nome);
+  t=troca(t,"[seu segmento]",s.nome);
+  if(CLIENTE)t=troca(t,"[seu nome]",CLIENTE);
+  return t;
+}
 function el(tag,cls,html){var e=document.createElement(tag);if(cls)e.className=cls;if(html!==undefined)e.innerHTML=html;return e}
 function store(seg){try{return JSON.parse(localStorage.getItem("ent:"+seg)||"{}")}catch(e){return {}}}
 function save(seg,o){try{localStorage.setItem("ent:"+seg,JSON.stringify(o))}catch(e){}}
@@ -431,19 +448,20 @@ function mostrar(id){
     c.appendChild(lab);li.appendChild(num);li.appendChild(c);ol.appendChild(li);keys.push(key);
   }
 
+  passo("instalar","Como instalar o planner","Assista ao passo a passo em vídeo antes de abrir e duplicar o planner.",function(c){
+    c.appendChild(link("Assistir vídeo de instalação",VIDEO_INSTALAR_PLANNER,"abriu vídeo instalar planner"));
+  });
   passo("planner","Seu planner: "+s.nome,"Planner de conteúdo de 30 dias feito para o seu segmento. Abra e duplique para o seu Notion.",function(c){
     c.appendChild(link("Abrir meu planner",s.url,"abriu planner"));
   });
-  passo("instalar","Como instalar o planner","Assista ao passo a passo em vídeo antes de duplicar o planner.",function(c){
-    c.appendChild(link("Assistir vídeo de instalação",VIDEO_INSTALAR_PLANNER,"abriu vídeo instalar planner"));
-  });
-  passo("prompts","Seus prompts de I.A.","Copie o prompt, cole na sua I.A., transforme em agente, troque [seu nome] e [seu segmento] pelos seus dados.",function(c){
+  passo("prompts","Seus prompts de I.A.","Copie o prompt, cole na sua I.A. e transforme em agente. O seu segmento já vem preenchido; complete só os campos entre colchetes que ficarem.",function(c){
     var box=el("div","prompts");
     PROMPTS.forEach(function(p){
+      var texto=preencher(p.texto,s);
       var d=el("details");d.appendChild(el("summary","",p.titulo));
-      var body=el("div","pbody"), pre=el("pre");pre.textContent=p.texto;body.appendChild(pre);
+      var body=el("div","pbody"), pre=el("pre");pre.textContent=texto;body.appendChild(pre);
       var cb=el("button","btn","Copiar prompt");cb.type="button";
-      cb.addEventListener("click",function(){copiar(p.texto,"Prompt copiado!");track("copiou prompt",p.titulo)});
+      cb.addEventListener("click",function(){copiar(texto,"Prompt copiado!");track("copiou prompt",p.titulo)});
       body.appendChild(cb);d.appendChild(body);box.appendChild(d);
     });
     c.appendChild(box);
