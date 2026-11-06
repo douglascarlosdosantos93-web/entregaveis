@@ -93,6 +93,7 @@ pre{white-space:pre-wrap;word-wrap:break-word;font-family:var(--body);font-size:
 .dia{font:inherit;font-weight:600;height:44px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
 .dia:hover{border-color:var(--accent)}
 .dia[aria-pressed="true"]{background:var(--ok);border-color:var(--ok);color:var(--surface)}
+.insta{margin-top:16px;font-size:15px;padding:9px 16px}
 .dica{display:flex;gap:12px;align-items:flex-start;margin-top:18px;background:var(--soft);border-radius:12px;padding:12px 14px;font-size:15px}
 .dica p{margin:0;flex:1}
 .dica button{font:inherit;font-size:20px;line-height:1;background:none;border:0;color:var(--muted);cursor:pointer;padding:0 4px}
@@ -106,6 +107,8 @@ pre{white-space:pre-wrap;word-wrap:break-word;font-family:var(--body);font-size:
   <div class="brand">Douglas Carlos Acompanhamento</div>
   <h1 id="titulo">Seus entregáveis estão aqui</h1>
   <p class="lead">Escolha o seu segmento e veja o planner certo para você, o vídeo de instalação e os prompts de I.A.</p>
+
+  <a class="btn alt insta" id="insta" href="https://www.instagram.com/eusoudouglascarlos/" target="_blank" rel="noopener">Me siga no Instagram: @eusoudouglascarlos</a>
 
   <div class="dica" id="dica" hidden><p id="dica-texto"></p><button type="button" id="dica-fechar" aria-label="Fechar dica">×</button></div>
 
@@ -585,6 +588,7 @@ function painelAdmin(){
   document.getElementById("dica-fechar").addEventListener("click",function(){box.hidden=true;try{localStorage.setItem("ent:dica-fechada","1")}catch(e){}});
 })();
 
+document.getElementById("insta").addEventListener("click",function(){track("clicou Instagram")});
 if(ADMIN)painelAdmin();
 track("abriu a página",location.hash.replace("#",""));
 daHash();
