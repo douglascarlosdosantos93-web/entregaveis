@@ -12,6 +12,9 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="icone.png">
+<link rel="apple-touch-icon" href="icone.png">
+<meta name="apple-mobile-web-app-title" content="Entregáveis">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
 <style>
@@ -84,6 +87,15 @@ pre{white-space:pre-wrap;word-wrap:break-word;font-family:var(--body);font-size:
 .afi-aviso{display:block;margin-top:14px;color:var(--muted);font-size:13.5px}
 .share{margin-top:18px;font-size:15px;color:var(--muted)}
 .share button{font:inherit;color:var(--accent);background:none;border:0;padding:0;text-decoration:underline;cursor:pointer}
+.dias{margin-top:26px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px}
+.dias-resumo{margin:10px 0 12px;font-weight:600}
+.dias-grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr));gap:8px}
+.dia{font:inherit;font-weight:600;height:44px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+.dia:hover{border-color:var(--accent)}
+.dia[aria-pressed="true"]{background:var(--ok);border-color:var(--ok);color:var(--surface)}
+.dica{display:flex;gap:12px;align-items:flex-start;margin-top:18px;background:var(--soft);border-radius:12px;padding:12px 14px;font-size:15px}
+.dica p{margin:0;flex:1}
+.dica button{font:inherit;font-size:20px;line-height:1;background:none;border:0;color:var(--muted);cursor:pointer;padding:0 4px}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s}
 .toast.show{opacity:1}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -94,6 +106,8 @@ pre{white-space:pre-wrap;word-wrap:break-word;font-family:var(--body);font-size:
   <div class="brand">Douglas Carlos Acompanhamento</div>
   <h1 id="titulo">Seus entregáveis estão aqui</h1>
   <p class="lead">Escolha o seu segmento e veja o planner certo para você, o vídeo de instalação e os prompts de I.A.</p>
+
+  <div class="dica" id="dica" hidden><p id="dica-texto"></p><button type="button" id="dica-fechar" aria-label="Fechar dica">×</button></div>
 
   <div class="seg" id="seg" role="group" aria-label="Escolha seu segmento"></div>
   <div id="result" aria-live="polite"><div class="empty">Selecione seu segmento acima para abrir seus materiais.</div></div>
@@ -493,6 +507,7 @@ function mostrar(id){
     });
   }
   resEl.appendChild(ol);
+  contador(id);
   if(s.afiliado){
     var af=el("section","afi");
     af.appendChild(el("h2","",""));af.lastChild.textContent=AFILIADO.titulo;
@@ -508,6 +523,34 @@ function mostrar(id){
     resEl.appendChild(af);
   }
   atualizaProg();
+}
+
+/* Contador dos 30 dias: a pessoa marca cada dia em que postou (fica salvo no aparelho dela) */
+function contador(id){
+  var chave=id+":dias", dias=store(chave);
+  var box=el("section","dias");
+  box.appendChild(el("h2","","Seus 30 dias de conteúdo"));
+  box.appendChild(el("p","tip","Marque cada dia em que você postou seguindo o planner."));
+  var resumo=el("p","dias-resumo"), grade=el("div","dias-grade");
+  function atualiza(){
+    var total=0, seq=0, maior=0;
+    for(var d=1;d<=30;d++){if(dias[d]){total++;seq++;if(seq>maior)maior=seq}else seq=0}
+    var ultimo=0;for(var u=30;u>=1;u--){if(dias[u]){ultimo=u;break}}
+    var atualSeq=0;for(var k=ultimo;k>=1&&dias[k];k--)atualSeq++;
+    resumo.textContent=total===30?"Parabéns! Você completou os 30 dias.":total+" de 30 dias postados · sequência atual: "+atualSeq+(atualSeq===1?" dia":" dias");
+  }
+  for(var d=1;d<=30;d++)(function(d){
+    var b=el("button","dia",String(d));b.type="button";
+    b.setAttribute("aria-pressed",dias[d]?"true":"false");b.setAttribute("aria-label","Dia "+d);
+    b.addEventListener("click",function(){
+      dias[d]=!dias[d];if(!dias[d])delete dias[d];save(chave,dias);
+      b.setAttribute("aria-pressed",dias[d]?"true":"false");
+      if(dias[d])track("postou dia",String(d));
+      atualiza();
+    });
+    grade.appendChild(b);
+  })(d);
+  box.appendChild(resumo);box.appendChild(grade);resEl.appendChild(box);atualiza();
 }
 
 function daHash(){mostrar((location.hash||"").replace("#",""))}
@@ -529,7 +572,21 @@ function painelAdmin(){
   });
   [l1,n,l2,sel,l3,base,bt,out].forEach(function(x){box.appendChild(x)});
 }
+/* Dica para salvar a página na tela inicial do celular (some quando a pessoa fecha) */
+(function(){
+  var ja=false;try{ja=localStorage.getItem("ent:dica-fechada")==="1"}catch(e){}
+  var instalado=(window.matchMedia&&matchMedia("(display-mode: standalone)").matches)||navigator.standalone;
+  if(ja||instalado)return;
+  var ios=/iPhone|iPad|iPod/i.test(navigator.userAgent);
+  document.getElementById("dica-texto").innerHTML="<strong>Dica:</strong> salve esta página na tela inicial do celular para não perder o link. "+
+    (ios?"No iPhone: toque em <strong>Compartilhar</strong> e depois em <strong>Adicionar à Tela de Início</strong>."
+        :"No Android: toque nos <strong>3 pontinhos</strong> do navegador e depois em <strong>Adicionar à tela inicial</strong>.");
+  var box=document.getElementById("dica");box.hidden=false;
+  document.getElementById("dica-fechar").addEventListener("click",function(){box.hidden=true;try{localStorage.setItem("ent:dica-fechada","1")}catch(e){}});
+})();
+
 if(ADMIN)painelAdmin();
+track("abriu a página",location.hash.replace("#",""));
 daHash();
 </script>
 </body>
